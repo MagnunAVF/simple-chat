@@ -15,4 +15,20 @@ app.use('/', (req, res) => {
   res.render('index.html');
 });
 
+const messages = [];
+
+io.on('connection', (socket) => {
+  console.log('new connection: ');
+  console.log(socket.id);
+
+  socket.emit('previousMessages', messages);
+
+  socket.on('sendMessage', (data) => {
+    messages.push(data);
+    console.log('received message: ');
+    console.log(data);
+    socket.broadcast.emit('receivedMessage', data);
+  });
+});
+
 server.listen(3000);
